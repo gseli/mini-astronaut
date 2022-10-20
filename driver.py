@@ -9,4 +9,4 @@ chrome_options.add_argument('--disable-gpu')
 chrome_options.add_argument('enable-automation')
 
 #set up chromedriver thats remote
-driver = webdriver.Remote(command_executor='http://localhost:4444/wd/hub', options=chrome_options)
+driver = webdriver.Remote(command_executor='http://selenium-hub:4444/wd/hub', options=chrome_options)
