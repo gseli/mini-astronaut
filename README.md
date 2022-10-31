@@ -20,4 +20,10 @@ You should have installed in your system the following:
 
 At the end of the process, you should see a message from pytest with the results of the tests.
 
+## Running with different Browsers
 
+Currently this is hard-coded to work with Chrome. If you wish to use either Firefox or Edge, do the following:
+
+1. Open the `docker-compose` file
+2. Localize the pytest configuration portion of the file
+3. On the command option, replace where it says 'chrome' with 'firefox' or 'microsoftedge'
