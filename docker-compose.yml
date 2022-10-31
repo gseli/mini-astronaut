@@ -1,7 +1,7 @@
 # To execute this docker-compose yml file use `docker-compose -f docker-compose-v3-beta-channel.yml up`
 # Add the `-d` flag at the end for detached execution
 # To stop the execution, hit Ctrl+C, and then `docker-compose -f docker-compose-v3-beta-channel.yml down`
-version: "3"
+version: "3.9"
 services:
   chrome:
     image: selenium/node-chrome:beta
@@ -12,6 +12,11 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:5555" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   edge:
     image: selenium/node-edge:beta
@@ -22,6 +27,11 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:5555" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   firefox:
     image: selenium/node-firefox:beta
@@ -32,6 +42,11 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:5555" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   selenium-hub:
     image: selenium/hub:latest
@@ -40,15 +55,20 @@ services:
       - "4442:4442"
       - "4443:4443"
       - "4444:4444"
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:4444/grid/api/proxy" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  #configure pytest
   pytest:
     build:
       context: .
       dockerfile: Dockerfile
-    tty: true
-    volumes:
-      - .:/spaceship
     stdin_open: true
+    tty: true
+    ports:
+      - "5000:5000"
     depends_on:
       - chrome
-      - edge
-      - firefox
+    command: "pytest --driver Remote --selenium-host selenium-hub --selenium-port 4444 --capability browserName chrome"
