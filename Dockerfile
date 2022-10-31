@@ -1,8 +1,13 @@
-#create a dockerfile that will execute pytest tests. copy requirements.txt file to the dockerfile. Use selenium as instructed in the docker-compose.yml file.
+#create a docker file to run pytest in a container
 FROM python:3.9
+#This could be any name
+WORKDIR /app
+#copy the requirements.txt file to the container
 COPY requirements.txt .
+#install the requirements
 RUN pip install -r requirements.txt
-EXPOSE 8000
-WORKDIR /spaceship
+#copy the rest of the files to the container
 COPY . .
-CMD ["pytest", "-v"]
+#run the pytest command
+
+CMD ["pytest", "-v", "--junitxml=report.xml", "--cov=app", "--cov-report=xml"]
